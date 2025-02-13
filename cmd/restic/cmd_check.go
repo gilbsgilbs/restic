@@ -373,11 +373,9 @@ func runCheck(ctx context.Context, opts CheckOptions, gopts GlobalOptions, args 
 	}
 
 	doReadData := func(packs map[restic.ID]int64) {
-		p := printer.NewCounter("packs")
-		p.SetMax(uint64(len(packs)))
 		errChan := make(chan error)
 
-		go chkr.ReadPacks(ctx, packs, p, errChan)
+		go chkr.ReadPacks(ctx, packs, printer, errChan)
 
 		for err := range errChan {
 			errorsFound = true
@@ -387,7 +385,6 @@ func runCheck(ctx context.Context, opts CheckOptions, gopts GlobalOptions, args 
 				salvagePacks.Insert(err.PackID)
 			}
 		}
-		p.Done()
 	}
 
 	switch {
